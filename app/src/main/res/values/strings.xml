@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ProductTest</string>
+    <string name="Product">Sản Phẩm</string>
+    <string name="Nodata">Nodata</string>
+    <string name="Name">Name</string>
+    <string name="Price">Price</string>
+    <string name="Description">Description</string>
+    <string name="ProductDetail">Product Detail</string>
+
+</resources>

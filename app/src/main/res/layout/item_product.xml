@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="5dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp">
+
+    <LinearLayout
+        android:id="@+id/view_foreground"
+        android:background="@android:color/white"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_gravity="center"
+            android:background="@drawable/cercleshape"
+            android:id="@+id/img_Productss"
+            android:padding="@dimen/dimen_15"
+            android:src="@drawable/ic_baseline_rate_review_24"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="7dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_marginTop="15dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="@color/black"
+                        android:id="@+id/txtName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Name Product"
+                        android:textAllCaps="false"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+
+
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textColor="@color/black"
+                    android:id="@+id/txtPrice"
+                    android:textStyle="italic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical|start"
+                    android:text="$99,999"
+                    android:textAllCaps="true"
+                    android:textSize="16sp"
+                    />
+                <ImageView
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/delete_cart"
+                    android:layout_marginRight="@dimen/dimen_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_delete" />
+
+
+
+
+
+            </RelativeLayout>
+            <TextView
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textSize="@dimen/dimen_17"
+                android:textColor="@color/black"
+                android:id="@+id/txtDes"
+                android:textAllCaps="false"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/txtPrice"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/imgProduct"
+                android:text="Des" />
+
+
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
