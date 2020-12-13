@@ -1,12 +1,15 @@
-package com.example.producttest;
+package com.example.producttest.activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,12 +19,17 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.producttest.R;
 import com.example.producttest.adapter.ProductAdapter;
 import com.example.producttest.database.DatabaseHelper;
 import com.example.producttest.model.Product;
@@ -30,8 +38,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView recyclerViewProduct;
@@ -44,8 +55,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private  ProductAdapter productAdapter;
     private  List<Product> productList;
     private  TextView txtNoData;
+    public static TextView txtTotalProduct ;
     private SearchView search_barView;
-
+    private Toolbar toolbar_Product;
     String name;
     String price;
     String des;
@@ -57,42 +69,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initView();
-
         databaseHelper = new DatabaseHelper(this);
         hasdatainlist();
+
+//        displayCurrentTextView();
         searchProduct();
     }
 
-    private void initView() {
-        recyclerViewProduct = findViewById(R.id.recyclerViewProduct);
-        search_barView = findViewById(R.id.search_barView);
-        txtNoData = findViewById(R.id.txtNoData);
-        findViewById(R.id.floatAddProduct).setOnClickListener(this);
+    private void displayCurrentTextView() {
+        Thread myThread;
+        Runnable runnable = new CountDownRunner();
+        myThread= new Thread(runnable);
+        myThread.start();
     }
 
-    private void searchProduct() {
-        search_barView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                newText = newText.toLowerCase();
-                ArrayList<Product>newList = new ArrayList<>();
-                for (Product product : productList){
-                    String name = product.getName().toLowerCase();
-                    if (name.contains(newText)){
-                        newList.add(product);
-                    }
+    private class CountDownRunner implements Runnable {
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    setRunOnUiThread();
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } catch (Exception e) {
                 }
-                setAdapter();
-                productAdapter.setFilter(newList);
-                return true;
+            }
+        }
+    }
+    private void setRunOnUiThread() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                try{
+                    setTotalTextView();
+                }catch (Exception e) {}
             }
         });
+    }
+
+    private void setTotalTextView() {
+        int total = totalProduct();
+        Locale locale = new Locale("vi","VN");
+        NumberFormat fmt =NumberFormat.getCurrencyInstance(locale);
+        txtTotalProduct.setText(fmt.format(total));
+    }
+
+    private int totalProduct(){
+        int total = 0;
+        for(Product product : productList)
+            total+=product.getPrice();
+        return total;
+    }
+    private void initView() {
+        search_barView = findViewById(R.id.search_barView);
+        txtTotalProduct = findViewById(R.id.txtTotalProduct);
+        recyclerViewProduct = findViewById(R.id.recyclerViewProduct);
+        txtNoData = findViewById(R.id.txtNoData);
+        findViewById(R.id.floatAddProduct).setOnClickListener(this);
     }
     public void hasdatainlist() {
         productList = databaseHelper.getAllProduct();
@@ -105,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             txtNoData.setVisibility(View.VISIBLE);
         }
     }
-
     private void setAdapter() {
         productAdapter = new ProductAdapter(this, productList);
         linearLayoutManager = new LinearLayoutManager(this);
@@ -114,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerViewProduct.setAdapter(productAdapter);
         productAdapter.notifyDataSetChanged();
     }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -126,9 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
-
-
     private void diaLogAddProduct() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -138,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initViewLayoutDiaLog(viewLayout);
         builder.setView(viewLayout);
         builder.setCancelable(true);
-         alertDialog = builder.create();
+        alertDialog = builder.create();
         alertDialog.show();
     }
 
@@ -148,36 +176,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          edtDescription = viewLayout.findViewById(R.id.edtDescription);
         Button btnAddProducts = viewLayout.findViewById(R.id.btnAddProduct);
         imageViewAdd =viewLayout.findViewById(R.id.selectImageview);
-
         btnAddProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                  name = edtName.getText().toString().trim();
-                 price = edtPrice.getText().toString().trim();
-                 des = edtDescription.getText().toString().trim();
+                String price = edtPrice.getText().toString().trim();
+                des = edtDescription.getText().toString().trim();
                 // byte [] image =imageViewToByte(imageViewAdd);
-
-                if (name.length()>0 && price.length()>0 && des.length()>0){
-                    alertDialog.dismiss();
-                }
                 if(TextUtils.isEmpty(name)) {
                     edtName.setError("Please input name");
-                    return;
-                }else if(TextUtils.isEmpty(price)) {
-                    edtPrice.setError("Please input price");
                     return;
                 }else if(TextUtils.isEmpty(des)) {
                     edtDescription.setError("Please input description");
                     return;
                 }
-//
-                Product product = new Product(name,price,des);
-                databaseHelper.insertProduct(product);
-                productList.addAll(databaseHelper.getAllProduct());
-                hasdatainlist();
+                int prisss = 0;
+                if (TextUtils.isEmpty(price)) {
+                    edtPrice.setError("Please input price");
+                }else {
+                    try {
+                        prisss = Integer.parseInt(price);
+                    }catch (NumberFormatException e ){
+                        edtPrice.setError("Please input again");
+                    }
+                }
+                if (prisss >0) {
+                    Product product = new Product(name, prisss, des);
+                    databaseHelper.insertProduct(product);
+                    productList.addAll(databaseHelper.getAllProduct());
+                    hasdatainlist();
+                    setTotalTextView();
+                    alertDialog.dismiss();
+                }else {
+                    edtPrice.setError("Please input again");
+                }
             }
         });
     }
+
 
     private byte[] imageViewToByte(ImageView imageView) {
         Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
@@ -187,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return byteArray;
 
     }
-
     public void chooseImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -214,9 +249,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
-
-
-
-
+    private void searchProduct() {
+        search_barView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                newText = newText.toLowerCase();
+                ArrayList<Product>newList = new ArrayList<>();
+                for (Product product : productList){
+                    String name = product.getName().toLowerCase();
+                    if (name.contains(newText)){
+                        newList.add(product);
+                    }
+                }
+//                setAdapter();
+                productAdapter.setFilter(newList);
+                return true;
+            }
+        });
+    }
 }

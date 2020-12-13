@@ -97,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Product product = new Product();
                 product.setId(cursor.getString(0));
                 product.setName(cursor.getString(1));
-                product.setPrice(cursor.getString(2));
+                product.setPrice(cursor.getInt(2));
                 product.setDes(cursor.getString(3));
 //                product.setImage(cursor.getBlob(4));
                 productArrayList.add(product);
@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String CREATE_TABLE =
                 "CREATE TABLE "+PRODUCT+"("+COLUMN_ID+" INTEGER PRIMARY KEY," +
                 ""+COLUMN_NAME+" VARCHAR," +
-                ""+COLUMN_PRICE+" VARCHAR," +
+                ""+COLUMN_PRICE+" INTEGER," +
                 ""+COLUMN_DES+" VARCHAR," +
                 ""+COLUMN_image+" BLOG)";
         sqLiteDatabase.execSQL(CREATE_TABLE);

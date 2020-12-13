@@ -5,40 +5,24 @@ import java.io.Serializable;
 public class Product implements Serializable {
     public String id;
     String name;
-    String price;
+    int price;
     String des;
     byte[] image;
 
     public Product() {
     }
 
-    public Product(String name, String price, String des) {
-
+    public Product(String name, int price, String des) {
         this.name = name;
         this.price = price;
         this.des = des;
     }
 
-    public Product(String id, String name, String price, String des, byte[] image) {
+    public Product(String id, String name, int price, String des) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.des = des;
-        this.image = image;
-    }
-
-    public Product(String id, String name, String price, String des) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.des = des;
-    }
-
-    public Product(String name, String price, String des, byte[] image) {
-        this.name = name;
-        this.price = price;
-        this.des = des;
-        this.image = image;
     }
 
     public String getId() {
@@ -57,11 +41,11 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

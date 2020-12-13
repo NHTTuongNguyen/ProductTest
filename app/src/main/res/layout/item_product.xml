@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginLeft="5dp"
-    android:layout_margin="8dp"
+
+    android:layout_margin="@dimen/dimen_10"
     app:cardCornerRadius="6dp"
     app:cardElevation="6dp">
 
@@ -16,12 +16,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_gravity="center"
-            android:background="@drawable/cercleshape"
             android:id="@+id/img_Productss"
-            android:padding="@dimen/dimen_15"
-            android:src="@drawable/ic_baseline_rate_review_24"
+            android:src="@drawable/logo"
+            android:padding="@dimen/dimen_5"
             android:layout_marginStart="7dp"
             android:layout_marginTop="7dp"
             android:layout_width="55dp"

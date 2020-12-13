@@ -2,10 +2,9 @@
     <!-- Base application theme. -->
     <style name="Theme.ProductTest" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#eeeeee</item>
-        <item name="colorPrimaryDark">@color/colorWhite</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorGreen</item>
         <item name="colorAccent">@color/colorGreen</item>
-        <item name="android:windowLightStatusBar">true</item>
 
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>

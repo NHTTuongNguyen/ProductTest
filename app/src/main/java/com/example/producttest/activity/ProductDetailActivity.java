@@ -6,16 +6,21 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.producttest.R;
 import com.example.producttest.model.Product;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class ProductDetailActivity extends AppCompatActivity {
     private TextView txtNameDetail,
     txtPriceDetail,txtDescriptionDetail;
     private Product product;
     private Toolbar toolbar_ProductDetail;
+    private ImageView imgDetail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,13 +52,19 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void initView() {
+//        imgDetail = findViewById(R.id.imgDetail);
         txtNameDetail = findViewById(R.id.txtNameDetail);
         txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
         txtPriceDetail = findViewById(R.id.txtPriceDetail);
         toolbar_ProductDetail = findViewById(R.id.toolbar_ProductDetail);
+        toolbar_ProductDetail.setTitle(product.getName());
         //setText
         txtNameDetail.setText(product.getName());
-        txtPriceDetail.setText(product.getPrice());
+        Locale locale = new Locale("vi","VN");
+        NumberFormat fmt =NumberFormat.getCurrencyInstance(locale);
+        txtPriceDetail.setText(fmt.format(product.getPrice()));
         txtDescriptionDetail.setText(product.getDes());
+//        imgDetail
+
     }
 }
