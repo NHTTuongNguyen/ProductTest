@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.producttest.activity.MainActivity;
 import com.example.producttest.model.Product;
 
 import java.util.ArrayList;
@@ -40,6 +41,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void queryData(String sql){
         SQLiteDatabase database = getWritableDatabase();
         database.execSQL(sql);
+    }
+
+    public void removeAll() {
+        SQLiteDatabase db = this.getWritableDatabase(); // helper is object extends SQLiteOpenHelper
+        db.delete(PRODUCT, null, null);
     }
     public void insertData (String name,String price,String des, byte [] image){
         SQLiteDatabase database = getWritableDatabase();

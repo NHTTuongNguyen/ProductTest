@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">ProductTest</string>
     <string name="Product">Product</string>
-    <string name="Nodata">Data not available</string>
+    <string name="Nodata">Please click on + add product</string>
     <string name="Name">Name</string>
     <string name="Price">Price</string>
     <string name="Description">Description</string>
     <string name="ProductDetail">Product Detail</string>
+    <string name="Notdataincart">Data in cart available</string>
+    <string name="title_activity_home">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="NodataHistory">Data not available in your cart</string>
 
 </resources>

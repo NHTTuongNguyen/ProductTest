@@ -1,6 +1,5 @@
 package com.example.producttest.activity;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,9 +17,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,8 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.producttest.R;
+import com.example.producttest.Share.SharedPreferences_Utils;
 import com.example.producttest.adapter.ProductAdapter;
 import com.example.producttest.database.DatabaseHelper;
+import com.example.producttest.model.Cart;
 import com.example.producttest.model.Product;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -39,7 +36,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,69 +47,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerViewProduct;
     private FloatingActionButton floatAddProduct;
     private final  int PICK_IMAGE_REQUEST = 71;
-    private  ImageView imageViewAdd;
-    private  DatabaseHelper databaseHelper;
-    private  AlertDialog alertDialog;
-    private  LinearLayoutManager linearLayoutManager;
-    private  ProductAdapter productAdapter;
-    private  List<Product> productList;
-    private  TextView txtNoData;
-    public static TextView txtTotalProduct ;
+    private ImageView imageViewAdd;
+    private DatabaseHelper databaseHelper;
+    private AlertDialog alertDialog;
+    private LinearLayoutManager linearLayoutManager;
+    private ProductAdapter productAdapter;
+    private List<Product> productList;
+    private TextView txtNoData;
+    private TextView txtTotalProduct ;
     private SearchView search_barView;
     private Toolbar toolbar_Product;
-    String name;
-    String price;
-    String des;
-
-    EditText edtName;
-    EditText edtPrice;
-    EditText edtDescription;
+    private String name, price, des;
+    private EditText edtName, edtPrice, edtDescription;
+    private Button btnHistory,btnProduct;
+    private SharedPreferences_Utils sharedPreferences_utils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
         databaseHelper = new DatabaseHelper(this);
+        sharedPreferences_utils = new SharedPreferences_Utils(MainActivity.this);
+        initView();
+
         hasdatainlist();
 
-//        displayCurrentTextView();
         searchProduct();
+        setTotalTextView();
     }
 
-    private void displayCurrentTextView() {
-        Thread myThread;
-        Runnable runnable = new CountDownRunner();
-        myThread= new Thread(runnable);
-        myThread.start();
-    }
 
-    private class CountDownRunner implements Runnable {
-        public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    setRunOnUiThread();
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                } catch (Exception e) {
-                }
-            }
-        }
-    }
-    private void setRunOnUiThread() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                try{
-                    setTotalTextView();
-                }catch (Exception e) {}
-            }
-        });
-    }
 
-    private void setTotalTextView() {
+    public void setTotalTextView() {
         int total = totalProduct();
         Locale locale = new Locale("vi","VN");
         NumberFormat fmt =NumberFormat.getCurrencyInstance(locale);
+//        sharedPreferences_utils.setSaveTotal(total);
         txtTotalProduct.setText(fmt.format(total));
     }
 
@@ -125,8 +96,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txtTotalProduct = findViewById(R.id.txtTotalProduct);
         recyclerViewProduct = findViewById(R.id.recyclerViewProduct);
         txtNoData = findViewById(R.id.txtNoData);
+        btnProduct = findViewById(R.id.btnProduct);
+        findViewById(R.id.btnHistory).setOnClickListener(this);
         findViewById(R.id.floatAddProduct).setOnClickListener(this);
+        int iii = sharedPreferences_utils.getSaveTotal();
+        Log.d("HHHH",iii+"");
+
+        btnProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (productList.size() > 0) {
+
+                    int total = totalProduct();
+                    Date dt = new Date();
+                    int hours = dt.getHours();
+                    int minutes = dt.getMinutes();
+                    int seconds = dt.getSeconds();
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    String date = simpleDateFormat.format(calendar.getTime());
+                    String curTime = hours + "h" + ":" + minutes + "m" + ":" + seconds + "s" +" - "+ date;
+                    Log.d("curTimecurTime", curTime + "");
+                    sharedPreferences_utils.setSaveCartProduct(MainActivity.this, total, curTime);
+
+
+                    ////
+                    databaseHelper.removeAll();
+//                    startActivity(new Intent(MainActivity.this,HistoryActivity.class));
+                    finish();
+                    startActivity(getIntent());
+                    startActivity(new Intent(MainActivity.this,HistoryActivity.class));
+
+                }else{
+                    Toast.makeText(MainActivity.this, "Your Cart Empty !!!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
+
     public void hasdatainlist() {
         productList = databaseHelper.getAllProduct();
         if (productList.size()>0) {
@@ -154,6 +161,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.selectImageview:
                 chooseImage();
+                break;
+            case R.id.btnHistory:
+                startActivity(new Intent(MainActivity.this,HistoryActivity.class));
                 break;
         }
     }
@@ -268,6 +278,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                setAdapter();
                 productAdapter.setFilter(newList);
                 return true;
+            }
+        });
+    }
+
+    private void displayCurrentTextView() {
+        Thread myThread;
+        Runnable runnable = new CountDownRunner();
+        myThread= new Thread(runnable);
+        myThread.start();
+    }
+
+    private class CountDownRunner implements Runnable {
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    setRunOnUiThread();
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+    private void setRunOnUiThread() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                try{
+//                    setTotalTextView();
+                }catch (Exception e) {}
             }
         });
     }

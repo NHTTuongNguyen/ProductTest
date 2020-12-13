@@ -74,6 +74,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     @Override
                     public void onClick(DialogInterface dialogInterface, int positions) {
                         removeProduct(position);
+                        ((MainActivity)context).setTotalTextView();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -164,6 +165,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         databaseHelper.deleteProduct(id);
         ((MainActivity)context).hasdatainlist();
+        ((MainActivity)context).setTotalTextView();
+
     }
 
     private void dialogUpdate(int position) {
@@ -208,6 +211,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     DatabaseHelper databaseHelper = new DatabaseHelper(context);
                     databaseHelper.updateProducts(new Product(product.getId(), name, priceInteger, des));
                     ((MainActivity) context).hasdatainlist();
+                    ((MainActivity)context).setTotalTextView();
                     alertDialog.dismiss();
                 }else {
                     edtPrice.setError("Please input again");
