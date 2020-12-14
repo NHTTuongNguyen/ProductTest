@@ -28,11 +28,9 @@ public class SharedPreferences_Utils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(Total,saveTotal);
         editor.commit();
-        Log.d("BBSSS",saveTotal+"");
     }
     public int getSaveTotal(){
         int saveTotal = sharedPreferences.getInt(Total,0);
-        Log.d("getSaveHours",saveTotal+"");
         return saveTotal;
     }
 
@@ -48,7 +46,6 @@ public class SharedPreferences_Utils {
         chartsModelArrayList.add(new Cart(total, currentTime));
         String json  =gson.toJson(chartsModelArrayList);
         editor.putString(Cart,json);
-        Log.d("set_chartArrayList",json);
         editor.commit();
     }
     public ArrayList<Cart> getSaveCartProduct(Context context) {
@@ -56,7 +53,6 @@ public class SharedPreferences_Utils {
         String json = sharedPreferences.getString(Cart, null);
         Type type = new TypeToken<ArrayList<Cart>>(){}.getType();
         ArrayList<Cart> chartsList = gson.fromJson(json, type);
-        Log.d("get_chartsArrayList",String.valueOf(json));
         if (chartsList == null) {
             chartsList = new ArrayList<>();
         }

@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         newList.add(product);
                     }
                 }
-//                setAdapter();
+                setAdapter();
                 productAdapter.setFilter(newList);
                 return true;
             }
