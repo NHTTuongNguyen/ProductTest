@@ -52,7 +52,6 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void initView() {
-//        imgDetail = findViewById(R.id.imgDetail);
         txtNameDetail = findViewById(R.id.txtNameDetail);
         txtDescriptionDetail = findViewById(R.id.txtDescriptionDetail);
         txtPriceDetail = findViewById(R.id.txtPriceDetail);
@@ -64,7 +63,5 @@ public class ProductDetailActivity extends AppCompatActivity {
         NumberFormat fmt =NumberFormat.getCurrencyInstance(locale);
         txtPriceDetail.setText(fmt.format(product.getPrice()));
         txtDescriptionDetail.setText(product.getDes());
-//        imgDetail
-
     }
 }

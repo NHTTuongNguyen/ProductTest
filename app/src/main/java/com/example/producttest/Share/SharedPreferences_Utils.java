@@ -2,7 +2,6 @@ package com.example.producttest.Share;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.example.producttest.model.Cart;
 import com.google.gson.Gson;
@@ -17,7 +16,7 @@ public class SharedPreferences_Utils {
     public static SharedPreferences sharedPreferences;
     public static final String MyPREFERENCES = "MyPrefsSetting1111" ;
     public static final String Total = "total_Key";
-    public static final String Cart = "Cart_Key";
+    public static final String CART_KEY = "Cart_Key";
 
     public SharedPreferences_Utils(Context context){
         mcontext=context;
@@ -37,20 +36,21 @@ public class SharedPreferences_Utils {
     public void setSaveCartProduct(Context context, int total, String currentTime) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String jsonStoryWatched = sharedPreferences.getString(Cart, null);
+        String jsonStoryWatched = sharedPreferences.getString(CART_KEY, null);
         ArrayList<Cart> chartsModelArrayList = new ArrayList<>();
         if (jsonStoryWatched !=null){
             Type type = new TypeToken<ArrayList<Cart>>(){}.getType();/////luu mang
             chartsModelArrayList = gson.fromJson(jsonStoryWatched,type);
         }
-        chartsModelArrayList.add(new Cart(total, currentTime));
+        chartsModelArrayList.add(0,new Cart(total, currentTime));
         String json  =gson.toJson(chartsModelArrayList);
-        editor.putString(Cart,json);
+        editor.putString(CART_KEY,json);
         editor.commit();
     }
+
     public ArrayList<Cart> getSaveCartProduct(Context context) {
         Gson gson = new Gson();
-        String json = sharedPreferences.getString(Cart, null);
+        String json = sharedPreferences.getString(CART_KEY, null);
         Type type = new TypeToken<ArrayList<Cart>>(){}.getType();
         ArrayList<Cart> chartsList = gson.fromJson(json, type);
         if (chartsList == null) {
@@ -58,9 +58,10 @@ public class SharedPreferences_Utils {
         }
         return chartsList;
     }
+
     public void removeSaveCartProduct(){
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(Cart);
+        editor.remove(CART_KEY);
         editor.commit();
     }
 }

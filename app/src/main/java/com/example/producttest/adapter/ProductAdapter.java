@@ -12,15 +12,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chauthai.swipereveallayout.SwipeRevealLayout;
+import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.example.producttest.activity.MainActivity;
 import com.example.producttest.R;
 import com.example.producttest.activity.ProductDetailActivity;
 import com.example.producttest.database.DatabaseHelper;
+import com.example.producttest.fragments.ProductListFragment;
 import com.example.producttest.model.Product;
 
 import java.text.NumberFormat;
@@ -28,21 +33,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolderProduct> {
     Context context;
     List<Product> productList;
     private final  int PICK_IMAGE_REQUEST = 71;
     EditText edtName;
     EditText edtPrice;
-    EditText edtDes;
+    EditText edtDes,edtCount;
     TextView textViewId;
     AlertDialog alertDialog;
-
+    ProductListFragment productListFragment;
+    ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
     public ProductAdapter(Context context, List<Product> productList) {
         this.context = context;
         this.productList = productList;
     }
-
+    public ProductAdapter(Context context, List<Product> productList,ProductListFragment productListFragment) {
+        this.context = context;
+        this.productList = productList;
+        this.productListFragment = productListFragment;
+    }
     @NonNull
     @Override
     public ViewHolderProduct onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -58,6 +69,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Locale locale = new Locale("vi","VN");
         NumberFormat fmt =NumberFormat.getCurrencyInstance(locale);
         holder.txtPrice.setText(fmt.format(product.getPrice()));
+        holder.txtCount.setText(product.getCount()+"");
         holder.txtDes.setText(product.getDes());
 //
 //        byte [] imageProduct = product.getImage();
@@ -74,7 +86,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     @Override
                     public void onClick(DialogInterface dialogInterface, int positions) {
                         removeProduct(position);
-                        ((MainActivity)context).setTotalTextView();
+//                        ((MainActivity)context).setTotalTextView();
+                        productListFragment.setTotalTextView();
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -89,6 +102,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
             }
         });
+
+//        viewBinderHelper.bind(holder.swipeRevealLayout,String.valueOf(product.getId()));
+//        holder.linearLayoutDelete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                removeProduct(position);
+//                productListFragment.setTotalTextView();
+//                notifyItemRemoved(position);
+//            }
+//        });
     }
 
     @Override
@@ -105,19 +128,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         return total;
     }
     public class ViewHolderProduct extends  RecyclerView.ViewHolder  {
-        public TextView txtName,txtPrice,txtDes,txtId;
+        public TextView txtName,txtPrice,txtDes,txtId,txtCount;
         public ImageView imgProduct,imgDelete;
         public ImageView img_Productss;
+        private LinearLayout linearLayoutDelete;
+        private SwipeRevealLayout swipeRevealLayout;
 
         public ViewHolderProduct(@NonNull View itemView) {
             super(itemView);
 //            txtId = itemView.findViewById(R.id.txtId);
             img_Productss = itemView.findViewById(R.id.img_Productss);
+//            linearLayoutDelete = itemView.findViewById(R.id.layoutDelete);
+//            swipeRevealLayout = itemView.findViewById(R.id.layoutSwipe);
             txtName = itemView.findViewById(R.id.txtName);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             txtDes = itemView.findViewById(R.id.txtDes);
             imgProduct = itemView.findViewById(R.id.imgProduct);
             imgDelete = itemView.findViewById(R.id.delete_cart);
+            txtCount = itemView.findViewById(R.id.txtCount);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -125,6 +153,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     Intent intent = new Intent(context, ProductDetailActivity.class);
                     intent.putExtra("ProductKey",productList.get(getPosition()));
                     context.startActivity(intent);
+                    Log.d("ASDAS","SADAS");
                 }
             });
             ///
@@ -164,8 +193,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         String id = product.getId();
         DatabaseHelper databaseHelper = new DatabaseHelper(context);
         databaseHelper.deleteProduct(id);
-        ((MainActivity)context).hasdatainlist();
-        ((MainActivity)context).setTotalTextView();
+//        ((MainActivity)context).hasdatainlist();
+//        ((MainActivity)context).setTotalTextView();
+        productListFragment.hasdatainlist();
+        productListFragment.setTotalTextView();
+
 
     }
 
@@ -177,14 +209,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         textViewId =viewLayout.findViewById(R.id.edtID);
         edtName =viewLayout.findViewById(R.id.edtName);
         edtPrice= viewLayout.findViewById(R.id.edtPrice);
+        edtCount = viewLayout.findViewById(R.id.edtCount);
         edtDes =viewLayout.findViewById(R.id.edtDescription);
         ImageView img= viewLayout.findViewById(R.id.selectImageviewUpdate);
         Button btn =viewLayout.findViewById(R.id.btnAddProduct);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Product products = productList.get(position);
+                edtName.setText(products.getName());
+
                 String name = edtName.getText().toString();
                 String priceString = edtPrice.getText().toString();
+                String count = edtCount.getText().toString().trim();
                 String des = edtDes.getText().toString();
               if(TextUtils.isEmpty(name)) {
                     edtName.setError("Please input name");
@@ -202,19 +239,30 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     }catch (NumberFormatException e){
                         edtPrice.setError("Please input is number");
                     }
+                }
+                int countss = 0;
 
+                if (TextUtils.isEmpty(count)){
+                    edtCount.setError("Please input count");
+                }else {
+                    try {
+                        countss = Integer.parseInt(count);
+                    }catch (NumberFormatException e){
 
+                    }
                 }
                 ////update
-                if (priceInteger>0) {
+                if (priceInteger>0 && countss > 0) {
                     Product product = productList.get(position);
                     DatabaseHelper databaseHelper = new DatabaseHelper(context);
-                    databaseHelper.updateProducts(new Product(product.getId(), name, priceInteger, des));
-                    ((MainActivity) context).hasdatainlist();
-                    ((MainActivity)context).setTotalTextView();
+                    databaseHelper.updateProducts(new Product(product.getId(), name, priceInteger,countss, des));
+//                    ((MainActivity) context).hasdatainlist();
+//                    ((MainActivity)context).setTotalTextView();
+                    productListFragment.hasdatainlist();
+                    productListFragment.setTotalTextView();
                     alertDialog.dismiss();
                 }else {
-                    edtPrice.setError("Please input again");
+                    Toast.makeText(context, "Please input again", Toast.LENGTH_SHORT).show();
 
                 }
             }

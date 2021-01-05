@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_margin="@dimen/dimen_10"
     app:cardCornerRadius="6dp"
-    app:cardElevation="6dp">
+    app:cardElevation="6dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/view_foreground"
         android:background="@android:color/white"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_gravity="center"
             android:id="@+id/img_Productss"
@@ -90,6 +88,18 @@
 
             </RelativeLayout>
             <TextView
+                android:textSize="@dimen/dimen_17"
+                android:textColor="@color/black"
+                android:id="@+id/txtCount"
+                android:textAllCaps="false"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/txtPrice"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/imgProduct"
+                android:text="Count" />
+            <TextView
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textSize="@dimen/dimen_17"
@@ -99,7 +109,7 @@
                 android:layout_marginBottom="@dimen/dimen_10"
                 android:layout_marginStart="10dp"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/txtPrice"
+                android:layout_below="@id/txtCount"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/imgProduct"
                 android:text="Des" />
@@ -108,7 +118,11 @@
 
 
         </LinearLayout>
+
+
     </LinearLayout>
 
 
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+
+

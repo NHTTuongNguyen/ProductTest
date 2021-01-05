@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_20"
-            android:hint="Name"
+            android:text="name"
             android:textSize="@dimen/dimen_20" />
         <EditText
             android:inputType="phone"
@@ -39,7 +39,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dimen_20"
             android:hint="Price"
-
+            android:textSize="@dimen/dimen_20" />
+        <EditText
+            android:inputType="text"
+            android:id="@+id/edtCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen_20"
+            android:hint="Count"
             android:textSize="@dimen/dimen_20" />
         <EditText
             android:id="@+id/edtDescription"

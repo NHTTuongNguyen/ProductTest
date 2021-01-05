@@ -1,25 +1,31 @@
-package com.example.producttest.activity;
+package com.example.producttest.fragments;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.producttest.R;
 import com.example.producttest.Share.SharedPreferences_Utils;
+import com.example.producttest.activity.HistoryActivity;
+import com.example.producttest.activity.HomeActivity;
 import com.example.producttest.adapter.HistoryAdapter;
 import com.example.producttest.model.Cart;
 
 import java.util.ArrayList;
 
-public class HistoryActivity extends AppCompatActivity {
+
+public class HistoryFragment extends Fragment {
+
     private Toolbar toolbar_History;
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerViewHistory;
@@ -28,31 +34,42 @@ public class HistoryActivity extends AppCompatActivity {
     private HistoryAdapter adapter;
     private TextView txtNoData;
     private Button btnRemove;
+    private View view;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
-        actionToolBar();
-        sharedPreferences_utils = new SharedPreferences_Utils(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        view =  inflater.inflate(R.layout.fragment_history, container, false);
+        sharedPreferences_utils = new SharedPreferences_Utils(getActivity());
         initView();
-        cartArrayList =  sharedPreferences_utils.getSaveCartProduct(this);
-        buidRecyclerView();
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        buidRecyclerView();
     }
 
     private void initView() {
-        recyclerViewHistory = findViewById(R.id.recyclerViewHistory);
-        txtNoData = findViewById(R.id.txtNoDataHistory);
-        btnRemove = findViewById(R.id.btnRemove);
+        recyclerViewHistory = view.findViewById(R.id.recyclerViewHistory);
+        txtNoData = view.findViewById(R.id.txtNoDataHistory);
+        btnRemove = view.findViewById(R.id.btnRemove);
         btnRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (cartArrayList.size()>0) {
                     sharedPreferences_utils.removeSaveCartProduct();
-                    finish();
-                    startActivity(getIntent());
+//                    finish();
+
+//                    startActivity(getIntent());
+//                    getActivity().onBackPressed();
+                    ((HomeActivity)getActivity()).getViewPager().setCurrentItem(0);
+
                 }else {
-                    Toast.makeText(HistoryActivity.this,
+                    Toast.makeText(getActivity(),
                             "Not Data", Toast.LENGTH_SHORT).show();
                 }
 
@@ -61,9 +78,10 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void buidRecyclerView() {
+        cartArrayList =  sharedPreferences_utils.getSaveCartProduct(getActivity());
         if (cartArrayList.size()> 0){
-            adapter = new HistoryAdapter(HistoryActivity.this,cartArrayList);
-            linearLayoutManager = new LinearLayoutManager(this);
+            adapter = new HistoryAdapter(getActivity(),cartArrayList);
+            linearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerViewHistory.setLayoutManager(linearLayoutManager);
             recyclerViewHistory.setHasFixedSize(true);
             recyclerViewHistory.setAdapter(adapter);
@@ -75,17 +93,5 @@ public class HistoryActivity extends AppCompatActivity {
             recyclerViewHistory.setVisibility(View.GONE);
             txtNoData.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void actionToolBar() {
-        toolbar_History = findViewById(R.id.toolbar_History);
-        setSupportActionBar(toolbar_History);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar_History.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 }

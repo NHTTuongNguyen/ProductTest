@@ -6,6 +6,7 @@ public class Product implements Serializable {
     public String id;
     String name;
     int price;
+    int count;
     String des;
     byte[] image;
 
@@ -23,6 +24,29 @@ public class Product implements Serializable {
         this.name = name;
         this.price = price;
         this.des = des;
+    }
+
+    public Product(String name, int price, int count, String des) {
+        this.name = name;
+        this.price = price;
+        this.count = count;
+        this.des = des;
+    }
+
+    public Product(String id, String name, int price, int count, String des) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.count = count;
+        this.des = des;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public String getId() {

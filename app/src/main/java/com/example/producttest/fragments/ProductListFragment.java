@@ -1,22 +1,22 @@
-package com.example.producttest.activity;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+package com.example.producttest.fragments;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.producttest.R;
 import com.example.producttest.Share.SharedPreferences_Utils;
+import com.example.producttest.activity.HomeActivity;
 import com.example.producttest.adapter.ProductAdapter;
 import com.example.producttest.database.DatabaseHelper;
 import com.example.producttest.model.Product;
@@ -32,8 +33,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +41,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProductListFragment extends Fragment implements View.OnClickListener {
+    private View view;
     private RecyclerView recyclerViewProduct;
     private FloatingActionButton floatAddProduct;
     private final  int PICK_IMAGE_REQUEST = 71;
@@ -62,21 +62,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SharedPreferences_Utils sharedPreferences_utils;
     private MaterialSearchBar materialSearchBar;
     private List<Product> suggesList = new ArrayList<>();
+    private   FragmentTransaction fragmentTransaction;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        databaseHelper = new DatabaseHelper(this);
-        sharedPreferences_utils = new SharedPreferences_Utils(MainActivity.this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+
+        view =  inflater.inflate(R.layout.fragment_product_list, container, false);
+        databaseHelper = new DatabaseHelper(getActivity());
+        sharedPreferences_utils = new SharedPreferences_Utils(getActivity());
         initView();
         hasdatainlist();
         searchProduct();
         setTotalTextView();
 
 
-
+        return view;
     }
-
 
 
     public void setTotalTextView() {
@@ -91,16 +93,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for(Product product : productList)
             total += product.getPrice() * product.getCount();
         return total;
+
     }
     private void initView() {
-        materialSearchBar = findViewById(R.id.materialSearchBar);
-        search_barView = findViewById(R.id.search_barView);
-        txtTotalProduct = findViewById(R.id.txtTotalProduct);
-        recyclerViewProduct = findViewById(R.id.recyclerViewProduct);
-        txtNoData = findViewById(R.id.txtNoData);
-        btnProduct = findViewById(R.id.btnProduct);
-        findViewById(R.id.btnHistory).setOnClickListener(this);
-        findViewById(R.id.floatAddProduct).setOnClickListener(this);
+        materialSearchBar = view.findViewById(R.id.materialSearchBar);
+        search_barView = view.findViewById(R.id.search_barView);
+        txtTotalProduct = view.findViewById(R.id.txtTotalProduct);
+        recyclerViewProduct = view.findViewById(R.id.recyclerViewProduct);
+        txtNoData = view.findViewById(R.id.txtNoData);
+        view.findViewById(R.id.txtNoData).setOnClickListener(this);
+        btnProduct = view.findViewById(R.id.btnProduct);
+        view.findViewById(R.id.btnHistory).setOnClickListener(this);
         btnProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,18 +117,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                     String date = simpleDateFormat.format(calendar.getTime());
                     String curTime = hours + "h" + ":" + minutes + "m" + ":" + seconds + "s" +" - "+ date;
-                    sharedPreferences_utils.setSaveCartProduct(MainActivity.this, total, curTime);
-                    databaseHelper.removeAll();finish();
-                    startActivity(getIntent());
-                    startActivity(new Intent(MainActivity.this,HistoryActivity.class));
+                    sharedPreferences_utils.setSaveCartProduct(getActivity(), total, curTime);
+                    databaseHelper.removeAll();
+
+                    ((HomeActivity)getActivity()).getViewPager().setCurrentItem(1);
+//                    setFragment(new TestFragment());
+//                    Fragment fragment = new HistoryFragment();
+//                    getChildFragmentManager().beginTransaction()
+//                            .replace(R.id.container, fragment)
+//                            .addToBackStack(null)
+//                            .commit();
 
                 }else{
-                    Toast.makeText(MainActivity.this, "Your Cart Empty !!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Your Cart Empty !!!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+    private void setFragment(Fragment fragment) {
 
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_container, fragment);
+//        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
     public void hasdatainlist() {
         productList = databaseHelper.getAllProduct();
         if (productList.size()>0) {
@@ -141,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     private void setAdapter() {
-        productAdapter = new ProductAdapter(this, productList);
-        linearLayoutManager = new LinearLayoutManager(this);
+        productAdapter = new ProductAdapter(getActivity(), productList,ProductListFragment.this);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewProduct.setLayoutManager(linearLayoutManager);
         recyclerViewProduct.setHasFixedSize(true);
         recyclerViewProduct.setAdapter(productAdapter);
@@ -152,19 +167,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.floatAddProduct:
-                diaLogAddProduct();
-                break;
             case R.id.selectImageview:
                 chooseImage();
                 break;
             case R.id.btnHistory:
-                startActivity(new Intent(MainActivity.this,HistoryActivity.class));
+                diaLogAddProduct();
+
+//                startActivity(new Intent(getActivity(),HistoryActivity.class));
                 break;
+            case R.id.txtNoData:
+                diaLogAddProduct();
+            break;
         }
     }
     private void diaLogAddProduct() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = this.getLayoutInflater();
         View viewLayout = inflater.inflate(R.layout.dialog_addproduct,null);
         viewLayout.findViewById(R.id.selectImageview).setOnClickListener(this);
@@ -177,10 +194,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViewLayoutDiaLog(View viewLayout) {
-         edtName = viewLayout.findViewById(R.id.edtName);
-         edtPrice = viewLayout.findViewById(R.id.edtPrice);
-         edtCount = viewLayout.findViewById(R.id.edtCount);
-         edtDescription = viewLayout.findViewById(R.id.edtDescription);
+        edtName = viewLayout.findViewById(R.id.edtName);
+        edtPrice = viewLayout.findViewById(R.id.edtPrice);
+        edtCount = viewLayout.findViewById(R.id.edtCount);
+        edtDescription = viewLayout.findViewById(R.id.edtDescription);
         Button btnAddProducts = viewLayout.findViewById(R.id.btnAddProduct);
         imageViewAdd =viewLayout.findViewById(R.id.selectImageview);
         btnAddProducts.setOnClickListener(new View.OnClickListener() {
@@ -223,11 +240,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         setTotalTextView();
                         alertDialog.dismiss();
                     } else {
-                        Toast.makeText(MainActivity.this, "Please input name orther", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Please input name orther", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    Toast.makeText(MainActivity.this, "number than 0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "number than 0", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -281,24 +298,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(Intent.createChooser(intent,"Select Picture"),PICK_IMAGE_REQUEST);
 
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode ==PICK_IMAGE_REQUEST && resultCode==RESULT_OK && data != null && data.getData() != null)
-        {
-            Uri uri = data.getData();
-            try {
-                InputStream inputStream = getContentResolver().openInputStream(uri);
-                Bitmap bitmap  = BitmapFactory.decodeStream(inputStream);
-                imageViewAdd.setImageBitmap(bitmap);
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
 
     private void searchProduct() {
         search_barView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -322,7 +322,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 setAdapter();
                 productAdapter.setFilter(newList);
-
 
 
                 return true;
