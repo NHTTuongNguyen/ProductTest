@@ -19,12 +19,7 @@
             android:id="@+id/search_barView"
             app:queryHint="Search Name of Product" />
 
-            <com.mancj.materialsearchbar.MaterialSearchBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:mt_speechMode="false"
-                app:mt_hint="Search"
-                android:id="@+id/materialSearchBar"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

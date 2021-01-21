@@ -11,11 +11,11 @@
         android:layout_below="@id/appBarLayoutProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerViewHistory"/>
+        android:id="@+id/recyclerViewHistoryFr"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/txtNoDataHistory"
+        android:id="@+id/txtNoDataHistoryFr"
         android:textColor="@color/colorGreen"
         android:textSize="@dimen/dimen_25"
         android:text="@string/NodataHistory"
@@ -57,7 +57,7 @@
                         android:layout_height="wrap_content">
                         <Button
                             android:background="@drawable/buttonaddproduct"
-                            android:id="@+id/btnRemove"
+                            android:id="@+id/btnRemoveFr"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="12dp"
