@@ -13,10 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 import com.example.producttest.R
 import com.example.producttest.Share.SharedPreferences_Utils
 import com.example.producttest.adapter.ProductAdapter
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun diaLogAddProduct() {
         val builder = AlertDialog.Builder(this)
-        val inflater: LayoutInflater = this.getLayoutInflater()
+        val inflater: LayoutInflater = this.layoutInflater
         val viewLayout: View = inflater.inflate(R.layout.dialog_addproduct, null)
         viewLayout.findViewById<View>(R.id.selectImageview).setOnClickListener(this)
         viewLayout.findViewById<View>(R.id.btnAddProduct).setOnClickListener(this)
@@ -159,10 +158,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val btnAddProducts = viewLayout.findViewById<Button>(R.id.btnAddProduct)
         imageViewAdd = viewLayout.findViewById(R.id.selectImageview)
         btnAddProducts.setOnClickListener {
-            val name: String = edtName!!.text.toString().trim({ it <= ' ' })
-            val price: String = edtPrice!!.text.toString().trim({ it <= ' ' })
-            val count: String = edtCount!!.text.toString().trim({ it <= ' ' })
-            val des: String = edtDescription!!.text.toString().trim({ it <= ' ' })
+            val name: String = edtName!!.text.toString().trim { it <= ' ' }
+            val price: String = edtPrice!!.text.toString().trim { it <= ' ' }
+            val count: String = edtCount!!.text.toString().trim { it <= ' ' }
+            val des: String = edtDescription!!.text.toString().trim { it <= ' ' }
             // byte [] image =imageViewToByte(imageViewAdd);
             if (TextUtils.isEmpty(name)) {
                 edtName!!.error = "Please input name"
@@ -201,6 +200,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 Toast.makeText(this@MainActivity, "number than 0", Toast.LENGTH_SHORT).show()
             }
+//            if (priceInt > 0 && countInt > 0) {
+//                val product = Product(name, priceInt, countInt, des)
+//                if (!containss(product)) {
+//                    databaseHelper!!.insertProduct(product)
+//                    hasdatainlist()
+//                    setTotalTextView()
+//                    alertDialog!!.dismiss()
+//                } else {
+//                    Toast.makeText(this@MainActivity, "Please input name orther", Toast.LENGTH_SHORT).show()
+//                }
+//            } else {
+//                Toast.makeText(this@MainActivity, "number than 0", Toast.LENGTH_SHORT).show()
+//            }
         }
     }
 

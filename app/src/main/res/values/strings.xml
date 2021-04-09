@@ -16,4 +16,5 @@
     <string name="NodataHistory">Data not available in your cart</string>
     <string name="title_activity_home_buttom_nav">MainActivity</string>
 
+    <string name="data_not_null">Thông tin không được trống</string>
 </resources>

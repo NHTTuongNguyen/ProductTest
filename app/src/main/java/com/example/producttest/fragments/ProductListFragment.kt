@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,7 +114,7 @@ class ProductListFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setFragment(fragment: Fragment) {
-        fragmentTransaction = fragmentManager!!.beginTransaction()
+        fragmentTransaction = requireFragmentManager().beginTransaction()
         fragmentTransaction!!.replace(R.id.frame_container, fragment)
         //        fragmentTransaction.addToBackStack(null);
         fragmentTransaction!!.commit()
@@ -162,7 +161,6 @@ class ProductListFragment : Fragment(), View.OnClickListener {
         alertDialog = builder.create()
         alertDialog!!.show()
     }
-
     private fun initViewLayoutDiaLog(viewLayout: View) {
         edtName = viewLayout.findViewById<EditText>(R.id.edtName)
         edtPrice = viewLayout.findViewById<EditText>(R.id.edtPrice)
@@ -171,47 +169,46 @@ class ProductListFragment : Fragment(), View.OnClickListener {
         val btnAddProducts = viewLayout.findViewById<Button>(R.id.btnAddProduct)
         imageViewAdd = viewLayout.findViewById(R.id.selectImageview)
         btnAddProducts.setOnClickListener {
-            val name: String = edtName!!.getText().toString().trim({ it <= ' ' })
-            val price: String = edtPrice!!.getText().toString().trim({ it <= ' ' })
-            val count: String = edtCount!!.getText().toString().trim({ it <= ' ' })
-            val des: String = edtDescription!!.getText().toString().trim({ it <= ' ' })
-            // byte [] image =imageViewToByte(imageViewAdd);
-            if (TextUtils.isEmpty(name)) {
-                edtName!!.setError("Please input name")
-            } else if (TextUtils.isEmpty(des)) {
-                edtDescription!!.setError("Please input description")
-            }
-            var priceInt = 0
-            if (TextUtils.isEmpty(price)) {
-                edtPrice!!.setError("Please input price")
-            } else {
-                try {
-                    priceInt = price.toInt()
-                } catch (e: NumberFormatException) {
-                    edtPrice!!.setError("Please input again")
-                }
-            }
-            var countInt = 0
-            if (TextUtils.isEmpty(count)) {
-                edtCount!!.setError("Please input count")
-            } else {
-                try {
-                    countInt = count.toInt()
-                } catch (e: NumberFormatException) {
-                }
-            }
-            if (priceInt > 0 && countInt > 0) {
-                val product = Product(name, priceInt, countInt, des)
-                if (!containss(product)) {
-                    databaseHelper!!.insertProduct(product)
-                    hasdatainlist()
-                    setTotalTextView()
-                    alertDialog!!.dismiss()
+            val name: String = edtName!!.text.toString().trim { it <= ' ' }
+            val price: String = edtPrice!!.text.toString().trim { it <= ' ' }
+            val count: String = edtCount!!.text.toString().trim { it <= ' ' }
+            val des: String = edtDescription!!.text.toString().trim { it <= ' ' }
+            if (name != "" && price != "" && count != "" && des != "") {
+                var priceInt = 0
+                priceInt = price.toInt()
+                var countInt = 0
+                countInt = count.toInt()
+                if (priceInt >= 500 && countInt > 0) {
+                    val product = Product(name, priceInt, countInt, des)
+                    if (!containss(product)) {
+                        databaseHelper!!.insertProduct(product)
+                        hasdatainlist()
+                        setTotalTextView()
+                        alertDialog!!.dismiss()
+                    } else {
+                        Toast.makeText(activity, "Vui lòng nhập tên khác", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(activity, "Please input name orther", Toast.LENGTH_SHORT).show()
+                    if (priceInt < 500) {
+                        edtPrice!!.error = "Tối thiểu là 500đ"
+                    }
+                    if (countInt <= 0) {
+                        edtCount!!.error = "Nhập đúng số lượng"
+                    }
                 }
             } else {
-                Toast.makeText(activity, "number than 0", Toast.LENGTH_SHORT).show()
+                if (name == "") {
+                    edtName!!.error = resources.getString(R.string.data_not_null)
+                }
+                if (price == "") {
+                    edtPrice!!.error = resources.getString(R.string.data_not_null)
+                }
+                if (count == "") {
+                    edtCount!!.error = resources.getString(R.string.data_not_null)
+                }
+                if (des == "") {
+                    edtDescription!!.error = resources.getString(R.string.data_not_null)
+                }
             }
         }
     }

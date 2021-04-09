@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.chauthai.swipereveallayout.SwipeRevealLayout
-import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.example.producttest.R
 import com.example.producttest.activity.MainActivity
 import com.example.producttest.activity.ProductDetailActivity
@@ -34,7 +32,6 @@ class ProductAdapter : RecyclerView.Adapter<ViewHolderProduct> {
     var textViewId: TextView? = null
     var alertDialog: AlertDialog? = null
     var productListFragment: ProductListFragment? = null
-    var viewBinderHelper = ViewBinderHelper()
     var mainActivity : MainActivity? = null
 
     constructor(context: Context, productList: MutableList<Product>) {
@@ -103,7 +100,6 @@ class ProductAdapter : RecyclerView.Adapter<ViewHolderProduct> {
         var imgDelete: ImageView
         var img_Productss: ImageView
         private val linearLayoutDelete: LinearLayout? = null
-        private val swipeRevealLayout: SwipeRevealLayout? = null
 
         init {
             img_Productss = itemView.findViewById(R.id.img_Productss)
